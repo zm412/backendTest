@@ -13,7 +13,15 @@ app.use(function (req, res, next) {
 });
 
 
-app.get('/', (req, res) => {
+app.get(/\/*/, (req, res) => {
+  console.log('reqURL', req.query.name)
+  let url = 'https://www.example.com?name=n1&name=n2';
+  let params = (new URL(url)).searchParams;
+  let name1 = params.get('name');
+  let name2 = params.getAll('name');
+  console.log(name1)
+  console.log(name2)
+
   lesson_model.getLessons()
   .then(response => {
     res.status(200).send(response);
