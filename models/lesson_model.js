@@ -74,24 +74,8 @@ const filteringFunc = (body) => {
     let bodyDate = body.date.split(',');
     let status = body.status;
     let teacherIds = body.teacherIds;
-
-  //pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND status = ${status}`,  (error, results) => {
-
-    //pool.query(`SELECT * FROM  lessons L WHERE status=${status} AND  date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND id IN (SELECT COUNT(*) FROM lesson_students S WHERE L.id = S.lesson_id )`,  (error, results) => {
-//     pool.query(
-//      `
-//        select lessons.id,lessons.date, lessons.title,lessons.status,
-//            (
-//            select array_to_json(array_agg(row_to_json(d)))
-//            from (
-//                select * 
-//                from students
-//                  ) d
-//            ) as students 
-//
-//        from lessons
-//        where status = 0 
-//      `,
+    let studentsCount = body.studentsCount;
+    console.log(bodyDate, status, teacherIds)
 
     pool.query(
       `
@@ -103,11 +87,8 @@ const filteringFunc = (body) => {
           from students, lesson_students
           where lesson_students.lesson_id = lessons.id AND
           lesson_students.student_id = students.id
-          
-          
             ) d
       ) as students,
-      
        (
       select array_agg(row_to_json(p))
       from (
@@ -115,18 +96,26 @@ const filteringFunc = (body) => {
           from teachers, lesson_teachers
           where lesson_teachers.lesson_id = lessons.id AND
           lesson_teachers.teacher_id = teachers.id
-          
-          
             ) p
-      ) as teachers
+      ) as teachers,
+        (
+          select count(*)
+          from lesson_students
+          where lesson_students.visit = 't' AND
+          lesson_students.lesson_id = lessons.id
+      ) as visitCount 
+      
       
       
 
-  from lessons
-  WHERE 
+  from lessons, lesson_teachers
+    WHERE 
       date >= '${bodyDate[0]}' AND
       date <= '${bodyDate[1]}' AND
-      status = ${status}
+      status = ${status} AND
+      teacher_id IN ( ${teacherIds}) AND
+      studentsCount = ${studentsCount}
+      
 `,
 
                                                       (error, results) => {
