@@ -17,10 +17,13 @@ app.get(/\/*/, (req, res) => {
   console.log('reqURL', req.query)
 
   lesson_model.filteringFunc(req.query)
+ // lesson_model.getLessons()
   .then(response => {
+    console.log('res', response)
     res.status(200).send(response);
   })
   .catch(error => {
+    console.log(error)
     res.status(500).send(error);
   })
 })

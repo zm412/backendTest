@@ -23,11 +23,42 @@ const getLessons = () => {
     })
   }) 
 }
+//
+//const filteringFunc = (body) => {
+//  return new Promise(function(resolve, reject) {
+//    const {status, id} = body;
+//    pool.query(`SELECT * FROM lessons WHERE status=${status} AND id=${id}`,  (error, results) => {
+//      if (error) {
+//        console.log(error)
+//        reject(error)
+//      }
+//      console.log('RESULT INDEX',results.rows)
+//      resolve(results.rows);
+//    })
+//  })
+//}
+//
+//const filteringFunc = (body) => {
+//  return new Promise(function(resolve, reject) {
+//    const {teacherIds} = body; 
+//
+//    pool.query(`SELECT * FROM lesson_teachers WHERE teacher_id IN ( ${teacherIds})`,  (error, results) => {
+//      if (error) {
+//        console.log(error)
+//        reject(error)
+//      }
+//      console.log('RESULT INDEX',results.rows)
+//      resolve(results.rows);
+//    })
+//  })
+//}
 
 const filteringFunc = (body) => {
   return new Promise(function(resolve, reject) {
-    const {status, id} = body;
-    pool.query(`SELECT * FROM lessons WHERE status = ${status} AND id=${id}`,  (error, results) => {
+    let bodyDate = body.date.split(',');
+
+    //pool.query(`SELECT * FROM lessons WHERE date = '${body.date}'`,  (error, results) => {
+    pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}'`,  (error, results) => {
       if (error) {
         console.log(error)
         reject(error)
