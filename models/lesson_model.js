@@ -52,17 +52,48 @@ const getLessons = () => {
 //    })
 //  })
 //}
+//
+//const filteringFunc = (body) => {
+//  return new Promise(function(resolve, reject) {
+//    let bodyDate = body.date.split(',');
+//
+//    //pool.query(`SELECT * FROM lessons WHERE date = '${body.date}'`,  (error, results) => {
+//    pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}'`,  (error, results) => {
+//      if (error) {
+//        console.log(error)
+//        reject(error)
+//      }
+//      console.log('RESULT INDEX',results.rows)
+//      resolve(results.rows);
+//    })
+//  })
+//}
 
 const filteringFunc = (body) => {
   return new Promise(function(resolve, reject) {
     let bodyDate = body.date.split(',');
+    let status = body.status;
+    let teacherIds = body.teacherIds;
 
-    //pool.query(`SELECT * FROM lessons WHERE date = '${body.date}'`,  (error, results) => {
-    pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}'`,  (error, results) => {
-      if (error) {
-        console.log(error)
-        reject(error)
-      }
+  //pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND status = ${status}`,  (error, results) => {
+
+    //pool.query(`SELECT * FROM  lessons L WHERE status=${status} AND  date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND id IN (SELECT COUNT(*) FROM lesson_students S WHERE L.id = S.lesson_id )`,  (error, results) => {
+    pool.query(
+      `SELECT lessons.id, lessons.date, lessons.title, lessons.status, lesson_students.student_id, students.name, lesson_teachers.teacher_id
+      FROM  lessons,lesson_students, students, lesson_teachers
+      WHERE 
+        status=${status} AND 
+        date >= '${bodyDate[0]}' AND 
+        date <= '${bodyDate[1]}' AND 
+        lessons.id = lesson_students.lesson_id AND 
+        lesson_teachers.teacher_id IN ( ${teacherIds}) AND
+        lesson_students.student_id = students.id 
+      `,
+                                                      (error, results) => {
+              if (error) {
+                console.log(error)
+                reject(error)
+              }
       console.log('RESULT INDEX',results.rows)
       resolve(results.rows);
     })
