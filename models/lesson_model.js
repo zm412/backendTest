@@ -78,17 +78,57 @@ const filteringFunc = (body) => {
   //pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND status = ${status}`,  (error, results) => {
 
     //pool.query(`SELECT * FROM  lessons L WHERE status=${status} AND  date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}' AND id IN (SELECT COUNT(*) FROM lesson_students S WHERE L.id = S.lesson_id )`,  (error, results) => {
+//     pool.query(
+//      `
+//        select lessons.id,lessons.date, lessons.title,lessons.status,
+//            (
+//            select array_to_json(array_agg(row_to_json(d)))
+//            from (
+//                select * 
+//                from students
+//                  ) d
+//            ) as students 
+//
+//        from lessons
+//        where status = 0 
+//      `,
+
     pool.query(
-      `SELECT lessons.id, lessons.date, lessons.title, lessons.status, lesson_students.student_id, students.name, lesson_teachers.teacher_id
-      FROM  lessons,lesson_students, students, lesson_teachers
-      WHERE 
-        status=${status} AND 
-        date >= '${bodyDate[0]}' AND 
-        date <= '${bodyDate[1]}' AND 
-        lessons.id = lesson_students.lesson_id AND 
-        lesson_teachers.teacher_id IN ( ${teacherIds}) AND
-        lesson_students.student_id = students.id 
-      `,
+      `
+    select lessons.id,lessons.date, lessons.title,lessons.status,
+      (
+      select array_agg(row_to_json(d))
+      from (
+          select students.id, students.name, lesson_students.visit
+          from students, lesson_students
+          where lesson_students.lesson_id = lessons.id AND
+          lesson_students.student_id = students.id
+          
+          
+            ) d
+      ) as students,
+      
+       (
+      select array_agg(row_to_json(p))
+      from (
+          select teachers.id, teachers.name
+          from teachers, lesson_teachers
+          where lesson_teachers.lesson_id = lessons.id AND
+          lesson_teachers.teacher_id = teachers.id
+          
+          
+            ) p
+      ) as teachers
+      
+      
+
+  from lessons
+  WHERE 
+      date >= '${bodyDate[0]}' AND
+      date <= '${bodyDate[1]}' AND
+      status = ${status}
+`,
+
                                                       (error, results) => {
               if (error) {
                 console.log(error)
