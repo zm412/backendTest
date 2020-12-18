@@ -173,10 +173,8 @@ const filteringFunc = (body) => {
     let bodyDate = body.date.split(',');
     let date1 = bodyDate[0];
     let date2 = bodyDate[1] ? bodyDate[1] : bodyDate[0];
+    let {status, teacherIds, studentsCount} = body;
     
-    let status = body.status;
-    let teacherIds = body.teacherIds;
-    let studentsCount = body.studentsCount;
     console.log(date1,date2, status, teacherIds)
 
     pool.query(
@@ -216,11 +214,16 @@ const filteringFunc = (body) => {
       lessons.date <= '${date2}' AND
       lessons.status = ${status} AND
       lessons.id = lesson_teachers.lesson_id AND
-      lesson_teachers.teacher_id IN ( ${teacherIds})
+      lesson_teachers.teacher_id IN ( ${teacherIds}) AND
+      ${studentsCount} = (
+        select count(*)
+        from lesson_students
+        where
+          lesson_students.lesson_id = lessons.id
+      )
       
 `,
 
-      //studentsCount = ${studentsCount}
       (error, results) => {
               if (error) {
                 console.log(error)
