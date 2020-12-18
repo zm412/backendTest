@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление пользователя</title>
+    <meta charset="utf-8" />
+<style>
+.field{
+  width:180px;
+}
+
+.secBlock {
+border: 1px solid black;
+position: absolute;
+top: 20px;
+right: 20px;
+width: 100px;
+height: 120px;
+padding-left: 10px;
+}
+table{
+border: 2px solid black;
+border-collapse: collapse;
+position: absolute;
+top: 30%;
+left: 35%;
+width: 25%;
+height: 25%;
+}
+td, th{
+text-align: center;
+border: 2px solid black;
+width: 30px;
+height: 25px;
+}
+
+
+.none{
+pointer-events: none;
+
+}
+
+</style>
+</head>
+<body>
+    <h1>Get info</h1>
+     <form method="POST">
+        <label>Date</label><br>
+        <input name="date" class="field"/><br><br>
+        <label>Status</label><br>
+        <input name="status" type="number" class="field" min="1" max="2" /><br><br>
+        <label>teacher id</label><br>
+        <input name="teacherIds"  class="field"  /><br><br>
+        <input type="submit" value="Отправить" />
+     </form>
+      <div id='table'></div>
+     <a href="/">К списку пользователей</a>
+
+</body>
+<html>
+

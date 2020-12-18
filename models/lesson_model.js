@@ -113,12 +113,12 @@ const filteringFunc = (body) => {
       date >= '${bodyDate[0]}' AND
       date <= '${bodyDate[1]}' AND
       status = ${status} AND
-      teacher_id IN ( ${teacherIds}) AND
-      studentsCount = ${studentsCount}
+      teacher_id IN ( ${teacherIds}) 
       
 `,
 
-                                                      (error, results) => {
+      //studentsCount = ${studentsCount}
+      (error, results) => {
               if (error) {
                 console.log(error)
                 reject(error)
@@ -128,6 +128,7 @@ const filteringFunc = (body) => {
     })
   })
 }
+
 
 const createLesson = (body) => {
   return new Promise(function(resolve, reject) {
