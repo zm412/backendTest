@@ -1,4 +1,5 @@
 const lesson_model = require('./models/lesson_model')
+const validationTools = require('./models/funValidation')
 
 const express = require('express');
 const app = express();
@@ -15,8 +16,11 @@ app.use(function (req, res, next) {
 
 app.get(/\/*/, (req, res) => {
   console.log('reqURL', req.query)
+  console.log(validationTools.checkDate(req.query), 'kjlj')
+  
 
   lesson_model.filteringFunc(req.query)
+    console.log(validationTools.checkDate())
  // lesson_model.getLessons()
   .then(response => {
     console.log('res', response)
