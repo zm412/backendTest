@@ -173,7 +173,8 @@ const filteringFunc = (body) => {
     let bodyDate = body.date.split(',');
     let date1 = bodyDate[0];
     let date2 = bodyDate[1] ? bodyDate[1] : bodyDate[0];
-    let {status, teacherIds, studentsCount} = body;
+    let teacherIds = body.teacherIds;
+    let {status,page, lessonsPerPage, studentsCount} = body;
     
     console.log(date1,date2, status, teacherIds)
 
@@ -209,21 +210,25 @@ const filteringFunc = (body) => {
       
 
   from lessons, lesson_teachers
-    WHERE 
-      lessons.date >= '${date1}' AND
-      lessons.date <= '${date2}' AND
-      lessons.status = ${status} AND
-      lessons.id = lesson_teachers.lesson_id AND
-      lesson_teachers.teacher_id IN ( ${teacherIds}) AND
-      ${studentsCount} = (
-        select count(*)
-        from lesson_students
-        where
-          lesson_students.lesson_id = lessons.id
-      )
+
+  WHERE 
+    lessons.date >= '${date1}' AND
+    lessons.date <= '${date2}' AND
+    lessons.status = ${status} AND
+    lessons.id = lesson_teachers.lesson_id AND
+    lesson_teachers.teacher_id IN ( ${teacherIds}) AND
+      
+    ${studentsCount} = (
+      select count(*)
+      from lesson_students
+      where
+        lesson_students.lesson_id = lessons.id
+    ) 
+      
       
 `,
 
+  //limit ${lessonsPerPage}
       (error, results) => {
               if (error) {
                 console.log(error)
