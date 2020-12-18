@@ -48,7 +48,6 @@ app.post('/', (req, res) => {
     //console.log(validationTools.checkDate())
  // lesson_model.getLessons()
   .then(response => {
-    console.log('res', response)
     res.status(200).send(response);
   })
   .catch(error => {
