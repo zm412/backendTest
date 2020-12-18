@@ -171,16 +171,21 @@ const getLessons = () => {
 const filteringFunc = (body) => {
   return new Promise(function(resolve, reject) {
     let bodyDate = body.date.split(',');
-    let date1 = bodyDate[0];
-    let date2 = bodyDate[1] ? bodyDate[1] : bodyDate[0];
+    let date1 = bodyDate != false ? bodyDate[0] : ['2000-01-01'];
+    let date2 = bodyDate[1] ? bodyDate[1] : bodyDate != false ? bodyDate[0] : ['2040-01-01'];
     let teacherIds = body.teacherIds;
-    let {status,page, lessonsPerPage, studentsCount} = body;
+    let { studentsCount} = body;
+    let status = body.status != '0' || body.status != '1' ? '0,1' : body.status;
+    let page = body.page ? body.page : 1;
+    let lessonsPerPage = body.lessonsPerPage ? body.lessonsPerPage : 5;
+    let offset = lessonsPerPage * page - lessonsPerPage;
     
-    console.log(date1,date2, status, teacherIds)
+    
+    console.log('d1', date1,'d2', date2,'status', status,'tIds', teacherIds, 'stCount', studentsCount, 'page', page, 'lessPP', lessonsPerPage, 'off', offset)
 
     pool.query(
       `
-    select lessons.id,lessons.date, lessons.title,lessons.status,
+    select DISTINCT ON (lessons.id) lessons.id,lessons.date, lessons.title,lessons.status,
       (
       select array_agg(row_to_json(d))
       from (
@@ -214,7 +219,7 @@ const filteringFunc = (body) => {
   WHERE 
     lessons.date >= '${date1}' AND
     lessons.date <= '${date2}' AND
-    lessons.status = ${status} AND
+    lessons.status IN ( ${status} ) AND
     lessons.id = lesson_teachers.lesson_id AND
     lesson_teachers.teacher_id IN ( ${teacherIds}) AND
       
@@ -224,6 +229,8 @@ const filteringFunc = (body) => {
       where
         lesson_students.lesson_id = lessons.id
     ) 
+    limit ${lessonsPerPage}
+    offset ${offset}
       
       
 `,
