@@ -114,59 +114,17 @@ const getLessons = () => {
   }) 
 }
 
-//const filteringFunc = (body) => {
-//    let bodyDate = body.date.split(',');
-//    let status = body.status;
-//    let teacherIds = body.teacherIds;
-//    let studentsCount = body.studentsCount;
-//
-//    User.findAll({where:{name: "Tom"}, raw: true })
-//.then(users=>{
-//  console.log(users);
-//}).catch(err=>console.log(err));
-//
-//  return new Promise(function(resolve, reject) {
-//    pool.query(`SELECT * FROM lessons WHERE status=${status} AND id=${id}`,  (error, results) => {
-//      if (error) {
-//        console.log(error)
-//        reject(error)
-//      }
-//      console.log('RESULT INDEX',results.rows)
-//      resolve(results.rows);
-//    })
-//  })
-//}
-
-//const filteringFunc = (body) => {
-//  return new Promise(function(resolve, reject) {
-//    const {teacherIds} = body; 
-//
-//    pool.query(`SELECT * FROM lesson_teachers WHERE teacher_id IN ( ${teacherIds})`,  (error, results) => {
-//      if (error) {
-//        console.log(error)
-//        reject(error)
-//      }
-//      console.log('RESULT INDEX',results.rows)
-//      resolve(results.rows);
-//    })
-//  })
-//}
-//
-//const filteringFunc = (body) => {
-//  return new Promise(function(resolve, reject) {
-//    let bodyDate = body.date.split(',');
-//
-//    //pool.query(`SELECT * FROM lessons WHERE date = '${body.date}'`,  (error, results) => {
-//    pool.query(`SELECT * FROM lessons WHERE date >= '${bodyDate[0]}' AND date <= '${bodyDate[1]}'`,  (error, results) => {
-//      if (error) {
-//        console.log(error)
-//        reject(error)
-//      }
-//      console.log('RESULT INDEX',results.rows)
-//      resolve(results.rows);
-//    })
-//  })
-//}
+const getList = (str, maxQuantity) => {
+  let arr = str == undefined || str == '' ? [0, maxQuantity]: /^\d{1,3}$/.test(str) ? [str] : str.split(',') ;
+  let list = '';
+  if(arr.length == 2){
+     for(let i = arr[0]; i <= arr[1]; i++){
+       list += i < arr[1] ? i + ',' :   i   ;
+      }
+  }
+  console.log(list, 3)
+  return list;
+}
 
 const filteringFunc = (body) => {
   return new Promise(function(resolve, reject) {
@@ -175,11 +133,12 @@ const filteringFunc = (body) => {
     let date2 = bodyDate[1] ? bodyDate[1] : bodyDate != false ? bodyDate[0] : ['2040-01-01'];
     let status = body.status == '0' || body.status == '1' ?  body.status: '0,1';
     let teacherIds = body.teacherIds !== '' && body.teacherIds !== undefined ?  body.teacherIds: '1,2,3,4,5,6,7,8,9,10';
-    let studentsCount = body.studentsCount !== '' && body.studentsCount !== undefined ?  body.studentsCount: '1,2,3,4,5,6,7,8,9,10';
+    let studentsCount = getList(body.studentsCount, 10);
     let page = body.page ? body.page : 1;
     let lessonsPerPage = body.lessonsPerPage ? body.lessonsPerPage : 5;
     let offset = lessonsPerPage * page - lessonsPerPage;
     
+
     
     console.log('d1', date1,'d2', date2,'status', status,'tIds', teacherIds, 'stCount', studentsCount, 'page', page, 'lessPP', lessonsPerPage, 'off', offset)
 
@@ -214,7 +173,7 @@ const filteringFunc = (body) => {
       
       
 
-  from lessons, lesson_teachers
+      from lessons, lesson_teachers  
 
   WHERE 
     lessons.date >= '${date1}' AND
@@ -222,20 +181,18 @@ const filteringFunc = (body) => {
     lessons.status IN ( ${status} ) AND
     lessons.id = lesson_teachers.lesson_id AND
     lesson_teachers.teacher_id IN ( ${teacherIds}) AND
-      
-    ${studentsCount} = (
-      select count(*)
-      from lesson_students
-      where
+     (
+        select count(*)
+        from lesson_students
+        where
         lesson_students.lesson_id = lessons.id
-    ) 
+    ) IN  (  ${studentsCount} ) 
+
     limit ${lessonsPerPage}
     offset ${offset}
       
       
 `,
-
-  //limit ${lessonsPerPage}
       (error, results) => {
               if (error) {
                 console.log(error)
