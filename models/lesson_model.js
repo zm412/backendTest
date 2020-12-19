@@ -115,14 +115,17 @@ const getLessons = () => {
 }
 
 const getList = (str, maxQuantity) => {
-  let arr = str == undefined || str == '' ? [0, maxQuantity]: /^\d{1,3}$/.test(str) ? [str] : str.split(',') ;
+  console.log(/^\d+$/.test(str), 'str')
+  let arr = str === undefined || str === '' ? [0, maxQuantity]: /^\d+$/.test(str) ? [str] : str.split(',') ;
   let list = '';
   if(arr.length == 2){
      for(let i = arr[0]; i <= arr[1]; i++){
        list += i < arr[1] ? i + ',' :   i   ;
       }
+  }else{
+    list = arr[0]
   }
-  console.log(list, 3)
+  console.log(list,333)
   return list;
 }
 
