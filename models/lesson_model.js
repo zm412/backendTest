@@ -129,8 +129,11 @@ const getList = (str, maxQuantity) => {
 const filteringFunc = (body) => {
   return new Promise(function(resolve, reject) {
     let bodyDate = body.date.split(',');
-    let date1 = bodyDate != false ? bodyDate[0] : ['2000-01-01'];
-    let date2 = bodyDate[1] ? bodyDate[1] : bodyDate != false ? bodyDate[0] : ['2040-01-01'];
+
+    let date1 = body.date !== undefined && body.date !== ''? bodyDate[0] : ['2000-01-01'];
+
+    let date2 = body.date === undefined || body.date === '' ? ['2040-01-01'] : bodyDate[1] ? bodyDate[1] : bodyDate[0];
+
     let status = body.status == '0' || body.status == '1' ?  body.status: '0,1';
     let teacherIds = body.teacherIds && teacherIds !== '' && body.teacherIds !== undefined ?  body.teacherIds : '1,2,3,4,5,6,7,8,9,10';
     let studentsCount = getList(body.studentsCount, 10);

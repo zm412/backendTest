@@ -8,7 +8,7 @@ const checkDate = (body) => {
   let pageExp = /^\d+$/;
   let lessonsPerPageExp = /^\d+$/;
 
-  let dateTested = dateExp.test(date) || date === undefined ? true : false;
+  let dateTested = dateExp.test(date) || date === '' || date === undefined ? true : false;
   let statusTested =  /[0|1]/.test(status) || status === ''  || status === undefined   ? true : false;
   let teacherIdTested = teacherIdsExp.test(teacherIds)  || teacherIds  === undefined  || teacherIds === '' ? true : false;
   let studentCountTested = studentCountExp.test(studentsCount) || studentsCount === ''  || studentsCount === undefined   ? true : false;
