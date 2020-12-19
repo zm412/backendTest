@@ -130,6 +130,7 @@ const getList = (str, maxQuantity) => {
 }
 
 const filteringFunc = (body) => {
+  console.log(body)
   return new Promise(function(resolve, reject) {
     let bodyDate = body.date.split(',');
 

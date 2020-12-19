@@ -29,10 +29,12 @@ height: 25%;
 td, th{
 text-align: center;
 border: 2px solid black;
-width: 30px;
-height: 25px;
+padding: 10px;
 }
 
+form{
+  padding: 20px;
+}
 
 .none{
 pointer-events: none;
@@ -43,24 +45,79 @@ pointer-events: none;
 </head>
 <body>
     <h1>Get info</h1>
-     <form method="POST">
+       <form name="myform" action="" method="POST">
         <label>Date</label><br>
-        <input name="date" class="field"/><br><br>
+        <input id='date' name="date" class="field"/><br><br>
         <label>Status</label><br>
-        <input name="status" type="number" class="field" min="0" max="1" /><br><br>
+        <input id='status' name="status" type="number" class="field" min="0" max="1" /><br><br>
         <label>teacher id</label><br>
-        <input name="teacherIds"  class="field"  /><br><br>
+        <input id='teacherIds' name="teacherIds"  class="field"  /><br><br>
         <label>StudentsCount</label><br>
-        <input name="studentsCount" class="field"  /><br><br>
+        <input id='studentsCount' name="studentsCount" class="field"  /><br><br>
         <label>PageNumber</label><br>
-        <input name="page" type="number" class="field"  /><br><br>
+        <input id='page' name="page" type="number" class="field"  /><br><br>
         <label>LessonsPerPage</label><br>
-        <input name="lessonsPerPage" type="number" class="field"  /><br><br>
+        <input id='lessonsPerPage' name="lessonsPerPage" type="number" class="field"  /><br><br>
         <input type="submit" value="Отправить" />
      </form>
-      <div id='table'></div>
+     <br><br>
+     <div>
+       <table id='table'><tr><th>Lessons id</th><th>Date</th><th>Title</th><th>Status</th><th>Students</th><th>Teachers</th><th>VisitCount</th></tr></table>
+     </div>
      <a href="/">К списку пользователей</a>
 
+  <script>
+
+    let formElem = document.querySelector("form");
+    let tbl = document.querySelector("#table");
+    let date = document.querySelector("#date");
+    let status = document.querySelector("#status");
+    let teacherIds = document.querySelector("#teacherIds");
+    let studentsCount = document.querySelector("#studentsCount");
+    let page = document.querySelector("#page");
+    let lessonsPerPage = document.querySelector("#lessonsPerPage");
+    
+    
+    let bodyJSON = JSON.stringify({date: date.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
+
+    formElem.onsubmit = async (e) => {
+      e.preventDefault();
+
+    fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: bodyJSON })
+      .then(response => response.text())
+      .then(result => {
+          console.log(result);
+        let obj = JSON.parse(result)
+          getTbl(tbl,obj)
+        })
+      .catch(err => {
+        console.log('err', err);
+      })
+
+  };
+
+function getTbl(elem, arr){
+	let k = 0;
+		for(let i = 0; i < arr.length ; i++){
+			let tr = createEl('tr', elem);
+      for(let key in arr[i]){
+        let td = createEl('td', tr);
+        if(!Array.isArray(arr[i][key])){
+          td.innerHTML = arr[i][key]
+        }else{
+          getTbl(td, arr[i][key])
+        }
+      }
+			}
+}
+
+function createEl(tag, par ){
+	let el = document.createElement(tag);
+		par.appendChild(el);
+		return el;
+}
+  </script>
 </body>
+
 <html>
 

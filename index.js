@@ -36,11 +36,13 @@ app.use(bodyParser.json());
 app.get("/", function(req, res){
   //console.log('reqURL', req.body)
   //console.log(validationTools.checkDate(req.query), 'kjlj')
-  res.sendfile('index.html');
+  res.sendFile(__dirname + "/index.html");
 });
 
 app.post('/', (req, res) => {
-  console.log('reqURL', req.body)
+  console.log('reqURL', req.query)
+  //let bodyObj = JSON.parse(req.body);
+  //console.log(bodyObj, 'bodyObj')
   console.log(validationTools.checkDate(req.body), 'kjlj')
 
   let checked = validationTools.checkDate(req.body)
