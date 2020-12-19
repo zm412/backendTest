@@ -41,8 +41,12 @@ app.get("/", function(req, res){
 
 app.post('/', (req, res) => {
   console.log('reqURL', req.body)
-  //console.log(validationTools.checkDate(req.query), 'kjlj')
-  
+  console.log(validationTools.checkDate(req.body), 'kjlj')
+
+  let checked = validationTools.checkDate(req.body)
+  if(!checked){
+    res.status (500).send('sorry, try again')
+  }else{
 
   lesson_model.filteringFunc(req.body)
     //console.log(validationTools.checkDate())
@@ -54,6 +58,7 @@ app.post('/', (req, res) => {
     console.log(error)
     res.status(500).send(error);
   })
+  }
 })
 
 
