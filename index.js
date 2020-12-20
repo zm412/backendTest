@@ -1,6 +1,7 @@
 const lesson_model = require('./models/lesson_model')
 const validationTools = require('./models/funValidation')
 const bodyParser = require("body-parser");
+const { body, validationResult } = require('express-validator');
 const express = require('express');
 const app = express();
 
@@ -13,48 +14,21 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-
-//app.get(/\/*/, (req, res) => {
-//  console.log('reqURL', req.query)
-//  console.log(validationTools.checkDate(req.query), 'kjlj')
-//  
-//
-//  lesson_model.filteringFunc(req.query)
-//    console.log(validationTools.checkDate())
-// // lesson_model.getLessons()
-//  .then(response => {
-//    console.log('res', response)
-//    res.status(200).send(response);
-//  })
-//  .catch(error => {
-//    console.log(error)
-//    res.status(500).send(error);
-//  })
-//})
-//
-
 app.get("/", function(req, res){
-  //console.log('reqURL', req.body)
-  //console.log(validationTools.checkDate(req.query), 'kjlj')
   res.sendFile(__dirname + "/index.html");
 });
 
 app.post('/', (req, res) => {
   console.log('reqURL', req.query)
-  //let bodyObj = JSON.parse(req.body);
-  //console.log(bodyObj, 'bodyObj')
   console.log(validationTools.checkDate(req.body), 'kjlj')
 
   let checked = validationTools.checkDate(req.body)
   if(!checked){
     res.status (500).send('sorry, try again')
   }else{
-
-  lesson_model.filteringFunc(req.body)
-    //console.log(validationTools.checkDate())
- // lesson_model.getLessons()
-  .then(response => {
-    res.status(200).send(response);
+    lesson_model.filteringFunc(req.body)
+    .then(response => {
+      res.status(200).send(response);
   })
   .catch(error => {
     console.log(error)
