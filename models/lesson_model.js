@@ -183,6 +183,8 @@ AS
        ) AS combined;
 
     select * from temp_store
+    limit ${lessonsPerPage}
+    offset ${offset}
 
     `
     
@@ -241,6 +243,8 @@ AS
        ) AS combined ;
 
     select * from temp_store
+    limit ${lessonsPerPage}
+    offset ${offset}
 
     `;
 
