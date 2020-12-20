@@ -17,8 +17,10 @@ width: 100px;
 height: 120px;
 padding-left: 10px;
 }
+
 table{
-border: 2px solid black;
+display: none;
+width: 100%;
 border-collapse: collapse;
 position: absolute;
 top: 30%;
@@ -28,7 +30,7 @@ height: 25%;
 }
 td, th{
 text-align: center;
-border: 2px solid black;
+border: 1px solid black;
 padding: 10px;
 }
 
@@ -44,6 +46,7 @@ pointer-events: none;
 </style>
 </head>
 <body>
+  <div class='form'>
     <h1>Get info</h1>
        <form name="myform" action="" method="POST">
         <label>Date</label><br>
@@ -60,28 +63,35 @@ pointer-events: none;
         <input id='lessonsPerPage' name="lessonsPerPage" type="number" class="field"  /><br><br>
         <input type="submit" value="Отправить" />
      </form>
+  </div>
      <br><br>
-     <div>
-       <table id='table'><tr><th>Lessons id</th><th>Date</th><th>Title</th><th>Status</th><th>Students</th><th>Teachers</th><th>VisitCount</th></tr></table>
+     <div id='table'>
+       <table><tr><th>Lessons id</th><th>Date</th><th>Title</th><th>Status</th><th>Students</th><th>Teachers</th><th>VisitCount</th></tr></table>
+       <br><br>
+       <p>
+     <a href="/">Вернуться к фильтру</a>
+       </p>
      </div>
-     <a href="/">К списку пользователей</a>
 
   <script>
 
     let formElem = document.querySelector("form");
     let tbl = document.querySelector("#table");
-    let date = document.querySelector("#date");
+    let date = document.getElementById("date");
     let status = document.querySelector("#status");
     let teacherIds = document.querySelector("#teacherIds");
     let studentsCount = document.querySelector("#studentsCount");
     let page = document.querySelector("#page");
     let lessonsPerPage = document.querySelector("#lessonsPerPage");
+    let formBlock = document.querySelector(".form");
     
     
-    let bodyJSON = JSON.stringify({date: date.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
 
     formElem.onsubmit = async (e) => {
+    let bodyJSON = JSON.stringify({date: date.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
       e.preventDefault();
+      console.log(bodyJSON)
+      console.log(date)
 
     fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: bodyJSON })
       .then(response => response.text())
@@ -89,6 +99,9 @@ pointer-events: none;
           console.log(result);
         let obj = JSON.parse(result)
           getTbl(tbl,obj)
+          formBlock.style.cssText +=   'display: none';
+          tbl.style.cssText += 'display: inline'
+           
         })
       .catch(err => {
         console.log('err', err);
@@ -116,6 +129,7 @@ function createEl(tag, par ){
 		par.appendChild(el);
 		return el;
 }
+
   </script>
 </body>
 

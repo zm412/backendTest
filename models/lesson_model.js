@@ -139,7 +139,7 @@ const filteringFunc = (body) => {
     let date2 = body.date === undefined || body.date === '' ? ['2040-01-01'] : bodyDate[1] ? bodyDate[1] : bodyDate[0];
 
     let status = body.status == '0' || body.status == '1' ?  body.status: '0,1';
-    let teacherIds = body.teacherIds && teacherIds !== '' && body.teacherIds !== undefined ?  body.teacherIds : '1,2,3,4,5,6,7,8,9,10';
+    let teacherIds =  body.teacherIds !== '' && body.teacherIds !== undefined ?  body.teacherIds : '1,2,3,4,5,6,7,8,9,10';
     let studentsCount = getList(body.studentsCount, 10);
     let page = body.page ? body.page : 1;
     let lessonsPerPage = body.lessonsPerPage ? body.lessonsPerPage : 5;
