@@ -1,3 +1,4 @@
+
 const { Pool } = require('pg')
 const config = require('../config');
 
@@ -172,14 +173,15 @@ const filteringFunc = (body) => {
               where lesson_students.visit = 't' AND
               lesson_students.lesson_id = lessons.id
           ) as visitCount 
+
           
           from lessons, lesson_teachers  
-          ORDER BY lessons.id
-          limit ${lessonsPerPage}
-          offset ${offset}
-    `;
+    `
     
-    let sqlFilters = `
+    let sqlFilters = ` 
+
+
+
       WHERE 
         lessons.date >= '${date1}' AND
         lessons.date <= '${date2}' AND
@@ -200,7 +202,7 @@ const filteringFunc = (body) => {
 
     `;
 
-    let sqlFullQuery = body.date === '' || body.status === '' || body.teacherIds === '' || body.studentsCount === '' ? sqlCommPart : sqlCommPart + sqlFilters;
+    let sqlFullQuery = body.date === '' && body.status === '' && body.teacherIds === '' && body.studentsCount === '' ? sqlCommPart : sqlCommPart + sqlFilters;
     
 
     
