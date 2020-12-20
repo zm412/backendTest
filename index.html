@@ -8,25 +8,13 @@
   width:180px;
 }
 
-.secBlock {
-border: 1px solid black;
-position: absolute;
-top: 20px;
-right: 20px;
-width: 100px;
-height: 120px;
-padding-left: 10px;
-}
 
 table{
 display: none;
 width: 100%;
 border-collapse: collapse;
-position: absolute;
-top: 30%;
-left: 35%;
-width: 25%;
-height: 25%;
+top: 40px;
+left: 40px;
 }
 td, th{
 text-align: center;
@@ -65,8 +53,8 @@ pointer-events: none;
      </form>
   </div>
      <br><br>
-     <div id='table'>
-       <table><tr><th>Lessons id</th><th>Date</th><th>Title</th><th>Status</th><th>Students</th><th>Teachers</th><th>VisitCount</th></tr></table>
+     <div >
+       <table id='table'><tr><th>Lessons id</th><th>Date</th><th>Title</th><th>Status</th><th>Students</th><th>Teachers</th><th>VisitCount</th></tr></table>
        <br><br>
        <p>
      <a href="/">Вернуться к фильтру</a>
@@ -101,6 +89,7 @@ pointer-events: none;
           getTbl(tbl,obj)
           formBlock.style.cssText +=   'display: none';
           tbl.style.cssText += 'display: inline'
+          console.log(result)
            
         })
       .catch(err => {
