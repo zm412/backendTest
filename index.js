@@ -1,7 +1,6 @@
 const lesson_model = require('./models/lesson_model')
 const validationTools = require('./models/funValidation')
 const bodyParser = require("body-parser");
-const { body, validationResult } = require('express-validator');
 const express = require('express');
 const app = express();
 
@@ -39,8 +38,13 @@ app.post('/', (req, res) => {
 
 
 
+app.get("/lessons", function(req, res){
+  res.sendFile(__dirname + "/lessons.html");
+});
+
 
 app.post('/lessons', (req, res) => {
+  console.log(req.body)
   lesson_model.createLesson(req.body)
   .then(response => {
     res.status(200).send(response);
@@ -49,6 +53,8 @@ app.post('/lessons', (req, res) => {
     res.status(500).send(error);
   })
 })
+
+
 
 app.delete('/lessons/:id', (req, res) => {
   lesson_model.deleteLesson(req.params.id)
