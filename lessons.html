@@ -37,46 +37,44 @@ pointer-events: none;
 <body>
   <div class='form'>
     <h1>Get info</h1>
-       <form id="lessons" action="" method="POST">
 
         <label>Title</label><br>
         <input id='title' class="field"/><br><br>
 
         <label>teacher id</label><br>
-        <input id='teacherIds' name="teacherIds" class="field"  /><br><br>
+        <input id='teacherIds'class="field"  /><br><br>
 
         <label>0</label><br>
-        <input id='day0' name="daysForLesson" data-info='0' type="checkbox" class="field" /><br><br>
+        <input id='day0' name="daysForLesson" value='0' type="checkbox" class="field" /><br><br>
         
         <label>1</label><br>
-        <input id='day1' name="daysForLesson"  data-info='1' type="checkbox" class="field" /><br><br>
+        <input id='day1' name="daysForLesson"  value='1' type="checkbox" class="field" /><br><br>
 
         <label>2</label><br>
-        <input id='day2' name="daysForLesson"  data-info='2' type="checkbox" class="field" /><br><br>
+        <input id='day2' name="daysForLesson"  value='2' type="checkbox" class="field" /><br><br>
 
         <label>3</label><br>
-        <input id='day3' name="daysForLesson"  data-info='3' type="checkbox" class="field" /><br><br>
+        <input id='day3' name="daysForLesson"  value='3' type="checkbox" class="field" /><br><br>
 
         <label>4</label><br>
-        <input id='day4' name="daysForLesson"  data-info='4' type="checkbox" class="field" /><br><br>
+        <input id='day4' name="daysForLesson"  value='4' type="checkbox" class="field" /><br><br>
 
         <label>5</label><br>
-        <input id='day5' name="daysForLesson"  data-info='5' type="checkbox" class="field" /><br><br>
+        <input id='day5' name="daysForLesson"  value='5' type="checkbox" class="field" /><br><br>
 
         <label>6</label><br>
-        <input id='day6' name="daysForLesson"  data-info='6' type="checkbox" class="field" /><br><br>
+        <input id='day6' name="daysForLesson"  value='6' type="checkbox" class="field" /><br><br>
 
 
         <label>FirstDate</label><br>
         <input id='firstDate'  class="field"  /><br><br>
 
         <label>LessonsCount</label><br>
-        <input name="choosingFinishTime" id='lessonsCount' type="radio" class="field" /><br><br>
+        <input id='lessonsCount' class="field" /><br><br>
         <label>LastDay</label><br>
-        <input name="choosingFinishTime" id='lastDay' type="radio" class="field" /><br><br>
+        <input id='lastDay' class="field" /><br><br>
 
-        <input type="submit" value="Отправить" />
-     </form>
+        <input type="submit" id='butt' value="Отправить" />
   </div>
      <br><br>
      <div >
@@ -87,9 +85,8 @@ pointer-events: none;
 
   <script>
 
-    let titleElem = document.querySelector("#title");
-    let formLessons = document.querySelector("#lessons");
     let teacherIdsElem = document.querySelector("#teacherIds");
+    let titleElem = document.querySelector("#title");
     let day0 = document.querySelector("#day0");
     let day1 = document.querySelector("#day1");
     let day2 = document.querySelector("#day2");
@@ -98,15 +95,27 @@ pointer-events: none;
     let day5 = document.querySelector("#day5");
     let day6 = document.querySelector("#day6");
     let lessonsCount = document.querySelector("#lessonsCount");
+    let lastDay = document.querySelector("#lastDay");
     let page = document.querySelector("#page");
-let daysArr = [day0, day1, day2, day3, day4, day5, day6].reduce(list, item =>{
-  if(item.value == 'on') return list.push(item.datasetInfo)
-}, []);
+    let butt = document.querySelector("#butt");
+
     
     
 
-    formLessons.onsubmit = async (e) => {
-      let bodyJSON = JSON.stringify({title: titleElem.value, teacherIds: teacherIdsElem.value, days: daysArr });
+    butt.onclick = async (e) => {
+
+    let daysArr = [];
+    [day0, day1, day2, day3, day4, day5, day6].filter(( item ) =>{
+        if(item.checked){
+          console.log(item.value)
+          console.log(item.checked)
+          daysArr.push(item.value)
+  } 
+});
+
+    console.log(daysArr)
+
+      let bodyJSON = await JSON.stringify({title: titleElem.value, teacherIds: teacherIdsElem.value, daysForLesson: daysArr, lessonsCount: lessonsCount.value, lastDay: lastDay.value });
       e.preventDefault();
       console.log(bodyJSON)
 
@@ -116,9 +125,6 @@ let daysArr = [day0, day1, day2, day3, day4, day5, day6].reduce(list, item =>{
           console.log(result);
         let obj = JSON.parse(result)
           getTbl(tbl,obj)
-          formBlock.style.cssText +=   'display: none';
-          tbl.style.cssText += 'display: inline'
-          console.log(result)
            
         })
       .catch(err => {
