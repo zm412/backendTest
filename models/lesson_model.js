@@ -2,97 +2,6 @@
 const { Pool } = require('pg')
 const config = require('../config');
 
-const Sequelize = require("sequelize");
-
-const sequelize = new Sequelize("mydb", config.POSTGRES_USER, config.POSTGRES_PASS, {
-  dialect: "postgres",
-  host: "localhost",
-  port: "5432",
-   define: {
-    timestamps: false
-  }
-});
-
-const Lesson_students = sequelize.define("lesson_students", {
-  lesson_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  student_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  visit: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
-    allowNull: false
-  }
-});
-
-const Lesson_teachers = sequelize.define("lesson_teachers", {
-  lesson_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  teacher_id: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  }
-});
-
-const Lessons = sequelize.define("lessons", {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false
-  },
-  date: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
-  title: {
-    type: Sequelize.STRING(100),
-
-  },
-  status: {
-    type: Sequelize.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  }
-});
-
-
-const Students = sequelize.define("students", {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false
-  },
-  name: {
-    type: Sequelize.STRING(10),
-  }
-});
-
-const Teachers = sequelize.define("teachers", {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false
-  },
-  name: {
-    type: Sequelize.STRING(10),
-  }
-});
-
-//sequelize.sync().then(result=>{
-//})
-//.catch(err=> console.log("ERROR!!", err));
-
-
-
 const pool = new Pool({
   user: config.POSTGRES_USER,
   host: 'localhost',
@@ -225,15 +134,15 @@ AS
 
       WHERE 
         lessons.date >= '${date1}' AND
-        lessons.date <= '${date2}' AND
-        lessons.status IN ( ${status} ) AND
+        lessons.date <= '${date2}' OR 
+        lessons.status IN ( ${status} ) OR 
         exists(
             select lesson_teachers.lesson_id
               from lesson_teachers
               where lessons.id = lesson_teachers.lesson_id AND
               lesson_teachers.teacher_id IN ( ${ teacherIds } )
 
-          ) AND
+          ) OR 
          (
             select count(*)
             from lesson_students

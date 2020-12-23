@@ -44,7 +44,7 @@ app.get("/lessons", function(req, res){
 
 
 app.post('/lessons', (req, res) => {
-  console.log(req.body)
+  console.log('reqBody',req.body)
   lesson_model.createLesson(req.body)
   .then(response => {
     res.status(200).send(response);
