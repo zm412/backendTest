@@ -3,7 +3,16 @@ const validationTools = require('../models/funValidation')
 let assert = chai.assert;
 
 
-let checkDate = validationTools.checkDate;
+let {checkDate, prepareData} = validationTools;
+
+
+describe("prepareData", function() {
+
+  it("приводит объект к общему виду", function() {
+    assert.deepEqual(prepareData({date: '2019-05-13', status: '0', teacherIds: '1', studentsCount: '3,9', page: 2, lessonsPerPage: 20 }), {date1: '2019-05-13', date2:'2019-05-13', status:'0', teacherIds:'1', studentsCount: '3,4,5,6,7,8,9', page: 2, lessonsPerPage: 20, offset:20 });
+  });
+
+});
 
 
 
@@ -85,7 +94,6 @@ describe("checkDate", function() {
     assert.equal(checkDate({}), true);
   });
 
-
-
-
 });
+
+

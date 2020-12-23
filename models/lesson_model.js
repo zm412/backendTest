@@ -1,6 +1,10 @@
 
 const { Pool } = require('pg')
 const config = require('../config');
+const validationTools = require('./funValidation');
+
+let {checkDate, prepareData} = validationTools;
+
 
 const pool = new Pool({
   user: config.POSTGRES_USER,
@@ -24,36 +28,11 @@ const getLessons = () => {
   }) 
 }
 
-const getList = (str, maxQuantity) => {
-  console.log(/^\d+$/.test(str), 'str')
-  let arr = str === undefined || str === '' ? [0, maxQuantity]: /^\d+$/.test(str) ? [str] : str.split(',') ;
-  let list = '';
-  if(arr.length == 2){
-     for(let i = arr[0]; i <= arr[1]; i++){
-       list += i < arr[1] ? i + ',' :   i   ;
-      }
-  }else{
-    list = arr[0]
-  }
-  console.log(list,333)
-  return list;
-}
+const filteringFunc = (entryObj) => {
 
-const filteringFunc = (body) => {
-  console.log(body)
-  return new Promise(function(resolve, reject) {
-    let bodyDate = body.date.split(',');
-
-    let date1 = body.date !== undefined && body.date !== ''? bodyDate[0] : ['2000-01-01'];
-
-    let date2 = body.date === undefined || body.date === '' ? ['2040-01-01'] : bodyDate[1] ? bodyDate[1] : bodyDate[0];
-
-    let status = body.status == '0' || body.status == '1' ?  body.status: '0,1';
-    let teacherIds =  body.teacherIds !== '' && body.teacherIds !== undefined ?  body.teacherIds : '1,2,3,4,5,6,7,8,9,10';
-    let studentsCount = getList(body.studentsCount, 10);
-    let page = body.page ? body.page : 1;
-    let lessonsPerPage = body.lessonsPerPage ? body.lessonsPerPage : 5;
-    let offset = lessonsPerPage * page - lessonsPerPage;
+return new Promise(function(resolve, reject) {
+  let body = prepareData(entryObj);
+  let {date1, date2, status, teacherIds, studentsCount, page, lessonsPerPage, offset} = body;
 
     let sqlCommPart = `
     
@@ -134,15 +113,15 @@ AS
 
       WHERE 
         lessons.date >= '${date1}' AND
-        lessons.date <= '${date2}' OR 
-        lessons.status IN ( ${status} ) OR 
+        lessons.date <= '${date2}' AND
+        lessons.status IN ( ${status} ) AND
         exists(
             select lesson_teachers.lesson_id
               from lesson_teachers
               where lessons.id = lesson_teachers.lesson_id AND
               lesson_teachers.teacher_id IN ( ${ teacherIds } )
 
-          ) OR 
+          ) AND
          (
             select count(*)
             from lesson_students
