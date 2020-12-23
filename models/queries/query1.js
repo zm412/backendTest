@@ -1,43 +1,9 @@
 
-const { Pool } = require('pg')
-const config = require('../config');
-const validationTools = require('./funValidation');
 
-let {checkDate, prepareData} = validationTools;
-
-
-const pool = new Pool({
-  user: config.POSTGRES_USER,
-  host: 'localhost',
-  database: 'mydb',
-  password: config.POSTGRES_PASS,
-  port: 5432,
-});
-
-
-
-const getLessons = () => {
-  return new Promise(function(resolve, reject) {
-    pool.query('SELECT * FROM lessons', (error, results) => {
-      if (error) {
-        reject(error)
-        console.log('errorLM106', error)
-      }
-      resolve(results.rows);
-    })
-  }) 
-}
-
-const filteringFunc = (entryObj) => {
-
-return new Promise(function(resolve, reject) {
-  let body = prepareData(entryObj);
-  let {date1, date2, status, teacherIds, studentsCount, page, lessonsPerPage, offset} = body;
-
-    let sqlCommPart = `
-    
-CREATE TEMP TABLE temp_store ON COMMIT DROP
-AS
+const query1 = 
+  `
+  CREATE TEMP TABLE temp_store ON COMMIT DROP
+  AS
     SELECT * FROM
     (
       select DISTINCT ON (lessons.id) lessons.id,lessons.date, lessons.title,lessons.status,
@@ -75,8 +41,9 @@ AS
     offset ${offset}
 
     `
-    
-    let sqlFilters = ` 
+
+
+const query2 = ` 
     
     CREATE TEMP TABLE temp_store ON COMMIT DROP
     AS
@@ -136,52 +103,18 @@ AS
 
     `;
 
-    let sqlFullQuery = entryObj.date === '' && entryObj.status === '' && entryObj.teacherIds === '' && entryObj.studentsCount === '' ? sqlCommPart : sqlFilters;
-    
-
-    
-    console.log('d1', date1,'d2', date2,'status', status,'tIds', teacherIds, 'stCount', studentsCount, 'page', page, 'lessPP', lessonsPerPage, 'off', offset)
-
-    pool.query(sqlFullQuery , (error, results) => {
-              if (error) {
-                console.log(error)
-                reject(error)
-              }
-      console.log('RESULT INDEX',results[1].rows)
-      resolve(results[1].rows);
-    })
-  })
-}
 
 
-const createLesson = (body) => {
-  return new Promise(function(resolve, reject) {
-    const { name, email } = body
-    pool.query('INSERT INTO lessons (name, email) VALUES ($1, $2) RETURNING *', [name, email], (error, results) => {
-      if (error) {
-        reject(error)
-      }
-      resolve(`A new merchant has been added added: ${results.rows[0]}`)
-    })
-  })
-}
 
-const deleteLesson = () => {
-  return new Promise(function(resolve, reject) {
-    const id = parseInt(request.params.id)
-    pool.query('DELETE FROM lessons WHERE id = $1', [id], (error, results) => {
-      if (error) {
-        reject(error)
-      }
-      resolve(`Lesson deleted with ID: ${id}`)
-    })
-  })
-}
+
+
+
+
+
+
 
 
 module.exports = {
-  getLessons,
-  createLesson,
-  deleteLesson,
-  filteringFunc
+  query1,
+  query2
 }
