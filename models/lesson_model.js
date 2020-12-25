@@ -29,10 +29,12 @@ const getLessons = () => {
 }
 
 const filteringFunc = (entryObj) => {
+  console.log(entryObj, 'entryObj')
 
 return new Promise(function(resolve, reject) {
   let body = prepareData(entryObj);
   let {date1, date2, status, teacherIds, studentsCount, page, lessonsPerPage, offset} = body;
+  console.log(body, 'body')
 
     let sqlCommPart = `
     
@@ -137,16 +139,13 @@ AS
     `;
 
     let sqlFullQuery = entryObj.date === '' && entryObj.status === '' && entryObj.teacherIds === '' && entryObj.studentsCount === '' ? sqlCommPart : sqlFilters;
-    
-
-    
-    console.log('d1', date1,'d2', date2,'status', status,'tIds', teacherIds, 'stCount', studentsCount, 'page', page, 'lessPP', lessonsPerPage, 'off', offset)
 
     pool.query(sqlFullQuery , (error, results) => {
               if (error) {
                 console.log(error)
                 reject(error)
               }
+      console.log('RESULT INDEX',results)
       console.log('RESULT INDEX',results[1].rows)
       resolve(results[1].rows);
     })

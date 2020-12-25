@@ -37,8 +37,10 @@ pointer-events: none;
   <div class='form'>
     <h1>Get info</h1>
        <form name="myform" action="" method="POST">
-        <label>Date</label><br>
-        <input id='date' name="date" class="field"/><br><br>
+        <label>Date1</label><br>
+        <input id='date1' name="date1" class="field"/><br><br>
+        <label>Date2</label><br>
+        <input id='date2' name="date2" class="field"/><br><br>
         <label>Status</label><br>
         <input id='status' name="status" type="number" class="field" min="0" max="1" /><br><br>
         <label>teacher id</label><br>
@@ -65,7 +67,8 @@ pointer-events: none;
 
     let formElem = document.querySelector("form");
     let tbl = document.querySelector("#table");
-    let date = document.getElementById("date");
+    let date1 = document.getElementById("date1");
+    let date2 = document.getElementById("date2");
     let status = document.querySelector("#status");
     let teacherIds = document.querySelector("#teacherIds");
     let studentsCount = document.querySelector("#studentsCount");
@@ -76,10 +79,9 @@ pointer-events: none;
     
 
     formElem.onsubmit = async (e) => {
-    let bodyJSON = JSON.stringify({date: date.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
+    let bodyJSON = JSON.stringify({date1: date1.value,date2: date2.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
       e.preventDefault();
       console.log(bodyJSON)
-      console.log(date)
 
     fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: bodyJSON })
       .then(response => response.text())
@@ -88,8 +90,8 @@ pointer-events: none;
         let obj = JSON.parse(result)
           getTbl(tbl,obj)
           formBlock.style.cssText +=   'display: none';
-          tbl.style.cssText += 'display: inline'
-          console.log(result)
+          tbl.style.cssText += 'display: inline';
+          console.log(obj, 'obj');
            
         })
       .catch(err => {
