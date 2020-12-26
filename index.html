@@ -36,6 +36,8 @@ pointer-events: none;
 <body>
   <div class='form'>
     <h1>Get info</h1>
+    <div style="color:red">
+      <ul id='infoErr' ></ul></div>
        <form name="myform" action="" method="POST">
         <label>Date1</label><br>
         <input id='date1' name="date1" class="field"/><br><br>
@@ -66,6 +68,7 @@ pointer-events: none;
   <script>
 
     let formElem = document.querySelector("form");
+    let infoErr = document.querySelector("#infoErr");
     let tbl = document.querySelector("#table");
     let date1 = document.getElementById("date1");
     let date2 = document.getElementById("date2");
@@ -79,19 +82,23 @@ pointer-events: none;
     
 
     formElem.onsubmit = async (e) => {
+      infoErr.innerHTML = '';
     let bodyJSON = JSON.stringify({date1: date1.value,date2: date2.value, status: status.value, teacherIds: teacherIds.value, studentsCount: studentsCount.value, page: page.value, lessonsPerPage: lessonsPerPage.value});
       e.preventDefault();
       console.log(bodyJSON)
 
     fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: bodyJSON })
-      .then(response => response.text())
+      .then(response => response.json())
       .then(result => {
           console.log(result);
-        let obj = JSON.parse(result)
-          getTbl(tbl,obj)
-          formBlock.style.cssText +=   'display: none';
-          tbl.style.cssText += 'display: inline';
-          console.log(obj, 'obj');
+          if(!result.errors){
+            getTbl(tbl,result)
+            formBlock.style.cssText +=   'display: none';
+            tbl.style.cssText += 'display: inline';
+          }else{
+            console.log(result.errors) 
+            result.errors.map(item => infoErr.innerHTML += `<li>${item.msg} on field ${item.param} - ${item.value}`) 
+        }
            
         })
       .catch(err => {

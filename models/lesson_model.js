@@ -138,7 +138,7 @@ AS
 
     `;
 
-    let sqlFullQuery = entryObj.date === '' && entryObj.status === '' && entryObj.teacherIds === '' && entryObj.studentsCount === '' ? sqlCommPart : sqlFilters;
+    let sqlFullQuery = entryObj.date1 === '' &&entryObj.date2 === ''  && entryObj.status === '' && entryObj.teacherIds === '' && entryObj.studentsCount === '' ? sqlCommPart : sqlFilters;
 
     pool.query(sqlFullQuery , (error, results) => {
               if (error) {
